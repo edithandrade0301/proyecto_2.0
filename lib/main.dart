@@ -7,14 +7,13 @@ import 'package:proyecto_progra_movil_grupo1/perfiles/perfildos.dart';
 import 'package:proyecto_progra_movil_grupo1/perfiles/perfilplanificacion.dart';
 import 'package:proyecto_progra_movil_grupo1/informacion/infodurante.dart';
 import 'package:proyecto_progra_movil_grupo1/informacion/infodespues.dart';
+import 'package:proyecto_progra_movil_grupo1/perfiles/perfil_historial.dart';
 
 void main() {
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,34 +22,28 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class CalendarioEventos extends StatefulWidget {
   @override
   State<CalendarioEventos> createState() => _CalendarioEventosState();
 }
-
 class _CalendarioEventosState extends State<CalendarioEventos>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
   Map<DateTime, List<Map<String, dynamic>>> _eventos = {};
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   String _filtroBusqueda = '';
-
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this); // 3 pestañas
     cargarEventos(_eventos, setState);
   }
-
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     final eventosDelDia =
@@ -87,8 +80,6 @@ class _CalendarioEventosState extends State<CalendarioEventos>
             color: const Color(0xFFB2EBF2),
             child: const InfoDespuesTab(),
           ),
-          
-          
           // Pestaña 3: Calendario
           SingleChildScrollView(
             child: Column(
@@ -185,12 +176,8 @@ class _CalendarioEventosState extends State<CalendarioEventos>
         ],
         
       ),
-
       //dawer 
       drawer: const MiDrawer(),
-
-
-
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         animatedIconTheme: const IconThemeData(size: 22.0),
@@ -225,10 +212,8 @@ class _CalendarioEventosState extends State<CalendarioEventos>
     );
   }
 }
-
 class InfoDuranteTab extends StatelessWidget {
   const InfoDuranteTab({super.key});
-
   Widget getInfo(BuildContext context, int index) {
     final durante = Informacion.getItems()[index];
     return Card(
@@ -287,7 +272,6 @@ class InfoDuranteTab extends StatelessWidget {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final durante = Informacion.getItems();
@@ -300,10 +284,8 @@ class InfoDuranteTab extends StatelessWidget {
     );
   }
 }
-
 class InfoDespuesTab extends StatelessWidget {
   const InfoDespuesTab({super.key});
-
   Widget getInfo(BuildContext context, int index) {
     final despues = Informaciondespues.getItems()[index];
     return Card(
@@ -367,7 +349,6 @@ class InfoDespuesTab extends StatelessWidget {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final despues = Informaciondespues.getItems();
@@ -380,7 +361,6 @@ class InfoDespuesTab extends StatelessWidget {
     );
   }
 }
-
 class BusquedaPage extends StatelessWidget {
   const BusquedaPage({Key? key}) : super(key: key);
 
@@ -392,10 +372,6 @@ class BusquedaPage extends StatelessWidget {
     );
   }
 }
-
-
-
-
 class MiDrawer extends StatelessWidget {
   const MiDrawer({super.key});
 
