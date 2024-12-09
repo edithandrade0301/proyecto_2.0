@@ -202,186 +202,190 @@ void mostrarDialogoAgregarEvento(
   }
 
   showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Agregar Evento"),
-      content: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButton<String>(
-                value: categoriaSeleccionada,
-                onChanged: (nuevaCategoria) {
-                  setState(() {
-                    categoriaSeleccionada = nuevaCategoria!;
-                  });
-                },
-                items: ['Recordatorio', 'Cita médica']
-                    .map((categoria) => DropdownMenuItem(
-                          value: categoria,
-                          child: Text(categoria),
-                        ))
-                    .toList(),
-              ),
-              TextFormField(
-                controller: tituloController,
-                decoration:
-                    const InputDecoration(labelText: "Título del evento"),
-                keyboardType: TextInputType.text,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, ingrese el título';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: horaController,
-                readOnly: true,
-                decoration:
-                    const InputDecoration(labelText: "Hora del evento"),
-                onTap: () async {
-                  final TimeOfDay? pickedTime = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
-                  if (pickedTime != null) {
-                    horaController.text = pickedTime.format(context);
-                  }
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, seleccione una hora';
-                  }
-                  return null;
-                },
-              ),
-              if (categoriaSeleccionada == 'Recordatorio')
-                TextFormField(
-                  controller: descripcionController,
-                  decoration: const InputDecoration(
-                      labelText: "Descripción del evento"),
+  context: context,
+  builder: (context) {
+    return StatefulBuilder(
+      builder: (context, setStateDialog) => AlertDialog(
+        title: const Text("Agregar Evento"),
+        content: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButton<String>(
+                  value: categoriaSeleccionada,
+                  onChanged: (nuevaCategoria) {
+                    setStateDialog(() {
+                      categoriaSeleccionada = nuevaCategoria!;
+                    });
+                  },
+                  items: ['Recordatorio', 'Cita médica']
+                      .map((categoria) => DropdownMenuItem(
+                            value: categoria,
+                            child: Text(categoria),
+                          ))
+                      .toList(),
                 ),
-              if (categoriaSeleccionada == 'Cita médica') ...[
                 TextFormField(
-                  controller: doctorController,
-                  decoration: const InputDecoration(labelText: "Doctor/a"),
+                  controller: tituloController,
+                  decoration: const InputDecoration(labelText: "Título del evento"),
+                  keyboardType: TextInputType.text,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese el nombre del doctor/a';
+                      return 'Por favor, ingrese el título';
                     }
                     return null;
                   },
                 ),
                 TextFormField(
-                  controller: lugarController,
-                  decoration: const InputDecoration(labelText: "Lugar"),
+                  controller: horaController,
+                  readOnly: true,
+                  decoration: const InputDecoration(labelText: "Hora del evento"),
+                  onTap: () async {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (pickedTime != null) {
+                      setStateDialog(() {
+                        horaController.text = pickedTime.format(context);
+                      });
+                    }
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Por favor, ingrese el lugar';
+                      return 'Por favor, seleccione una hora';
                     }
                     return null;
                   },
                 ),
-              ],
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Text("Color: "),
-                  GestureDetector(
-                    onTap: () async {
-                      final nuevoColor = await showDialog<Color>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text("Seleccionar color"),
-                          content: BlockPicker(
-                            pickerColor: colorSeleccionado,
-                            onColorChanged: (color) {
-                              setState(() {
-                                colorSeleccionado = color;
-                              });
-                            },
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context, colorSeleccionado);
-                              },
-                              child: const Text("Aceptar"),
-                            ),
-                          ],
-                        ),
-                      );
-                      if (nuevoColor != null) {
-                        setState(() {
-                          colorSeleccionado = nuevoColor;
-                        });
+                if (categoriaSeleccionada == 'Recordatorio')
+                  TextFormField(
+                    controller: descripcionController,
+                    decoration: const InputDecoration(labelText: "Descripción del evento"),
+                  ),
+                if (categoriaSeleccionada == 'Cita médica') ...[
+                  TextFormField(
+                    controller: doctorController,
+                    decoration: const InputDecoration(labelText: "Doctor/a"),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, ingrese el nombre del doctor/a';
                       }
+                      return null;
                     },
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: colorSeleccionado,
+                  ),
+                  TextFormField(
+                    controller: lugarController,
+                    decoration: const InputDecoration(labelText: "Lugar"),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor, ingrese el lugar';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Text("Color: "),
+                    GestureDetector(
+                      onTap: () async {
+                        final nuevoColor = await showDialog<Color>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("Seleccionar color"),
+                            content: BlockPicker(
+                              pickerColor: colorSeleccionado,
+                              onColorChanged: (color) {
+                                setStateDialog(() {
+                                  colorSeleccionado = color;
+                                });
+                              },
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, colorSeleccionado);
+                                },
+                                child: const Text("Aceptar"),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (nuevoColor != null) {
+                          setStateDialog(() {
+                            colorSeleccionado = nuevoColor;
+                          });
+                        }
+                      },
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: colorSeleccionado,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("Imagen: "),
-                  ElevatedButton(
-                    onPressed: _seleccionarImagen,
-                    child: const Text("Seleccionar"),
-                  ),
-                ],
-              ),
-              if (imagenSeleccionada != null)
-                Image.file(
-                  imagenSeleccionada!,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
+                  ],
                 ),
-            ],
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Imagen: "),
+                    ElevatedButton(
+                      onPressed: _seleccionarImagen,
+                      child: const Text("Seleccionar"),
+                    ),
+                  ],
+                ),
+                if (imagenSeleccionada != null)
+                  Image.file(
+                    imagenSeleccionada!,
+                    height: 100,
+                    width: 100,
+                    fit: BoxFit.cover,
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancelar"),
-        ),
-        TextButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              setState(() {
-                final diaSeleccionado = selectedDay ?? focusedDay;
-                if (eventos[diaSeleccionado] == null) {
-                  eventos[diaSeleccionado] = [];
-                }
-                eventos[diaSeleccionado]?.add({
-                  "evento": tituloController.text,
-                  "categoria": categoriaSeleccionada,
-                  "color": colorSeleccionado,
-                  "desc": descripcionController.text,
-                  "hora": horaController.text,
-                  "doc": doctorController.text,
-                  "lugar": lugarController.text,
-                  "imagen": imagenSeleccionada?.path,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancelar"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                setState(() {
+                  final diaSeleccionado = selectedDay ?? focusedDay;
+                  if (eventos[diaSeleccionado] == null) {
+                    eventos[diaSeleccionado] = [];
+                  }
+                  eventos[diaSeleccionado]?.add({
+                    "evento": tituloController.text,
+                    "categoria": categoriaSeleccionada,
+                    "color": colorSeleccionado,
+                    "desc": descripcionController.text,
+                    "hora": horaController.text,
+                    "doc": doctorController.text,
+                    "lugar": lugarController.text,
+                    "imagen": imagenSeleccionada?.path,
+                  });
                 });
-              });
-              guardarEventos(eventos);
-              Navigator.pop(context);
-            }
-          },
-          child: const Text("Guardar"),
-        ),
-      ],
-    ),
-  );
+                guardarEventos(eventos);
+                Navigator.pop(context);
+              }
+            },
+            child: const Text("Guardar"),
+          ),
+        ],
+      ),
+    );
+  },
+);
+
 }
 
 
@@ -507,8 +511,7 @@ Widget eventoWidget(
     },
   );
 },
-
-  );
+);
 }
 
 void mostrarDialogoEditarEvento(
