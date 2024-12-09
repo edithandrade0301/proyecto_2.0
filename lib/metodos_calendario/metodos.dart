@@ -162,44 +162,44 @@ void mostrarDialogoAgregarEvento(
 
   File? imagenSeleccionada; // Definir imagenSeleccionada fuera del StatefulBuilder
 
-  Future<void> _seleccionarImagen() async {
-    final ImagePicker picker = ImagePicker();
+  Future<void> _seleccionarImagen(StateSetter setStateDialog) async {
+  final ImagePicker picker = ImagePicker();
 
-    // Mostrar un diálogo para que el usuario elija entre tomar una foto o seleccionar una imagen de la galería
-    final imageSource = await showDialog<ImageSource>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Selecciona una opción'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('Tomar Foto'),
-              onTap: () {
-                Navigator.pop(context, ImageSource.camera);
-              },
-            ),
-            ListTile(
-              title: const Text('Seleccionar desde Galería'),
-              onTap: () {
-                Navigator.pop(context, ImageSource.gallery);
-              },
-            ),
-          ],
-        ),
+  // Mostrar un diálogo para que el usuario elija entre tomar una foto o seleccionar de la galería
+  final imageSource = await showDialog<ImageSource>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Selecciona una opción'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text('Tomar Foto'),
+            onTap: () {
+              Navigator.pop(context, ImageSource.camera);
+            },
+          ),
+          ListTile(
+            title: const Text('Seleccionar desde Galería'),
+            onTap: () {
+              Navigator.pop(context, ImageSource.gallery);
+            },
+          ),
+        ],
       ),
-    );
+    ),
+  );
 
-    if (imageSource != null) {
-      // Usar la fuente seleccionada (cámara o galería)
-      final XFile? imagen = await picker.pickImage(source: imageSource);
-      if (imagen != null) {
-        setState(() {
-          imagenSeleccionada = File(imagen.path); // Guardar la imagen seleccionada
-        });
-      }
+  if (imageSource != null) {
+    // Seleccionar imagen de la cámara o galería
+    final XFile? imagen = await picker.pickImage(source: imageSource);
+    if (imagen != null) {
+      setStateDialog(() {
+        imagenSeleccionada = File(imagen.path); // Guardar la imagen seleccionada
+      });
     }
   }
+}
 
   showDialog(
   context: context,
@@ -330,22 +330,25 @@ void mostrarDialogoAgregarEvento(
                 ),
                 const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Imagen: "),
-                    ElevatedButton(
-                      onPressed: _seleccionarImagen,
-                      child: const Text("Seleccionar"),
-                    ),
-                  ],
-                ),
-                if (imagenSeleccionada != null)
-                  Image.file(
-                    imagenSeleccionada!,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    const Text("Imagen: "),
+    ElevatedButton(
+      onPressed: () => _seleccionarImagen(setStateDialog),
+      child: const Text("Seleccionar"),
+    ),
+  ],
+),
+if (imagenSeleccionada != null)
+  Padding(
+    padding: const EdgeInsets.only(top: 10),
+    child: Image.file(
+      imagenSeleccionada!,
+      height: 100,
+      width: 100,
+      fit: BoxFit.cover,
+    ),
+  ),
               ],
             ),
           ),
@@ -522,12 +525,14 @@ void mostrarDialogoEditarEvento(
   DateTime focusedDay,
   DateTime? selectedDay,
 ) {
-  File? imagenSeleccionada;
+  File? imagenSeleccionada = evento['imagen'] != null && evento['imagen'].isNotEmpty
+      ? File(evento['imagen'])
+      : null;
 
-  Future<void> _seleccionarImagen() async {
+  Future<void> _seleccionarImagen(StateSetter setStateDialog) async {
     final ImagePicker picker = ImagePicker();
 
-    // Mostrar un diálogo para que el usuario elija entre tomar una foto o seleccionar desde la galería
+    // Mostrar diálogo para elegir cámara o galería
     final imageSource = await showDialog<ImageSource>(
       context: context,
       builder: (context) => AlertDialog(
@@ -553,11 +558,10 @@ void mostrarDialogoEditarEvento(
     );
 
     if (imageSource != null) {
-      // Usar la fuente seleccionada (cámara o galería)
       final XFile? imagen = await picker.pickImage(source: imageSource);
       if (imagen != null) {
-        setState(() {
-          imagenSeleccionada = File(imagen.path);
+        setStateDialog(() {
+          imagenSeleccionada = File(imagen.path); // Actualizar imagen seleccionada
         });
       }
     }
@@ -706,17 +710,20 @@ void mostrarDialogoEditarEvento(
                     children: [
                       const Text("Imagen: "),
                       ElevatedButton(
-                        onPressed: _seleccionarImagen,
+                        onPressed: () => _seleccionarImagen(setStateDialog),
                         child: const Text("Seleccionar"),
                       ),
                     ],
                   ),
                   if (imagenSeleccionada != null)
-                    Image.file(
-                      imagenSeleccionada!,
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.cover,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Image.file(
+                        imagenSeleccionada!,
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                 ],
               ),
@@ -758,5 +765,6 @@ void mostrarDialogoEditarEvento(
     ),
   );
 }
+
 
 
