@@ -8,6 +8,7 @@ import 'package:proyecto_progra_movil_grupo1/perfiles/perfilplanificacion.dart';
 import 'package:proyecto_progra_movil_grupo1/informacion/infodurante.dart';
 import 'package:proyecto_progra_movil_grupo1/informacion/infodespues.dart';
 import 'package:proyecto_progra_movil_grupo1/perfiles/perfil_historial.dart';
+import 'package:proyecto_progra_movil_grupo1/perfiles/chatbot.dart';
 
 void main() {
   runApp(const MyApp());
@@ -192,7 +193,7 @@ class _CalendarioEventosState extends State<CalendarioEventos>
               // Acción para redirigir al chatbot
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const BusquedaPage()),
+                MaterialPageRoute(builder: (context) => const ChatScreen()),
               );
             },
           ),
@@ -361,17 +362,6 @@ class InfoDespuesTab extends StatelessWidget {
     );
   }
 }
-class BusquedaPage extends StatelessWidget {
-  const BusquedaPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Buscar Eventos')),
-      body: const Center(child: Text("Pantalla de búsqueda")),
-    );
-  }
-}
 class MiDrawer extends StatelessWidget {
   const MiDrawer({super.key});
 
@@ -415,11 +405,17 @@ class MiDrawer extends StatelessWidget {
                 }),
           ),
           Container(
-            color: Colors.green[50],
-            child: const ListTile(
-              leading: Icon(Icons.chat),
-              title: Text('Vithalia Asistente'),
-            ),
+            color: const Color.fromARGB(255, 220, 234, 253),
+            child: ListTile(
+              leading: const Icon(Icons.pending_actions_outlined),
+                title: const Text('Vithalia Asistente'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ChatScreen()));
+                }),
           ),
           Container(
               color: Colors.red[50],
